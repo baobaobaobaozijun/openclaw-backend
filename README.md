@@ -18,9 +18,21 @@ backend/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/openclaw/
+│   │   │   ├── entity/        # 实体类
+│   │   │   │   ├── Article.java
+│   │   │   │   ├── Category.java
+│   │   │   │   ├── Tag.java
+│   │   │   │   └── User.java
+│   │   │   ├── mapper/        # Mapper 接口
+│   │   │   │   ├── ArticleMapper.java
+│   │   │   │   ├── CategoryMapper.java
+│   │   │   │   ├── TagMapper.java
+│   │   │   │   └── UserMapper.java
+│   │   │   ├── config/        # 配置类
+│   │   │   │   └── MyMetaObjectHandler.java
 │   │   │   ├── auth/          # 认证模块
 │   │   │   ├── user/          # 用户模块
-│   │   │   ├── config/        # 配置类
+│   │   │   ├── article/       # 文章模块
 │   │   │   ├── exception/     # 异常处理
 │   │   │   └── common/        # 公共组件
 │   │   └── resources/
@@ -82,6 +94,13 @@ jwt:
 
 ## 模块说明
 
+### 文章模块 (article) - 🆕
+
+- 文章 CRUD 接口
+- 文章分类管理
+- 文章标签管理
+- 文章状态管理（草稿/发布）
+
 ### 用户认证模块 (auth)
 
 - 用户登录
@@ -124,4 +143,23 @@ MIT License
 ---
 
 **维护者**: 酱肉 (Jiangrou)  
-**最后更新**: 2026-03-10
+**最后更新**: 2026-03-12
+
+## 开发日志
+
+### 2026-03-12 - Day 1
+
+✅ 完成文章模块实体类创建：
+- `Article.java` - 文章实体
+- `Category.java` - 分类实体
+- `Tag.java` - 标签实体
+- `User.java` - 用户实体
+
+✅ 完成 Mapper 接口创建：
+- `ArticleMapper.java`
+- `CategoryMapper.java`
+- `TagMapper.java`
+- `UserMapper.java`
+
+✅ 完成 MyBatis-Plus 自动填充配置：
+- `MyMetaObjectHandler.java`
