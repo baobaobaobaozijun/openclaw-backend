@@ -3,7 +3,6 @@ package com.openclaw.controller;
 import com.openclaw.common.Result;
 import com.openclaw.dto.ArticleCreateDTO;
 import com.openclaw.dto.ArticleResponseDTO;
-import com.openclaw.dto.ArticleUpdateDTO;
 import com.openclaw.service.ArticleService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -53,14 +52,18 @@ public class ArticleController {
     }
 
     /**
-     * 获取所有文章
+     * 获取文章列表（支持分页和搜索）
      * 
-     * GET /api/articles
+     * GET /api/articles?page=1&size=10&keyword=xxx&categoryId=1
      */
     @GetMapping
-    public Result<List<ArticleResponseDTO>> getAllArticles() {
-        log.info("Get all articles");
-        List<ArticleResponseDTO> result = articleService.getAllArticles();
+    public Result<Page<ArticleResponseDTO>> getArticles(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId) {
+        log.info("Get articles with pagination: page={}, size={}, keyword={}, categoryId={}", page, size, keyword, categoryId);
+        Page<ArticleResponseDTO> result = articleService.getArticlesWithPagination(page, size, keyword, categoryId);
         return Result.success(result);
     }
 
