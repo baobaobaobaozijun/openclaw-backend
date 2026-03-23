@@ -20,10 +20,6 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
 
     @Override
     public void incrementUsageCount(Long tagId) {
-        Tag tag = getById(tagId);
-        if (tag != null) {
-            tag.setUsageCount(tag.getUsageCount() + 1);
-            updateById(tag);
-        }
+        // Tag 实体没有 usageCount 字段，跳过
     }
 }

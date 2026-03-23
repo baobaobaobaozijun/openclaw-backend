@@ -3,6 +3,7 @@ package com.openclaw.controller;
 import com.openclaw.common.Result;
 import com.openclaw.dto.ArticleCreateDTO;
 import com.openclaw.dto.ArticleResponseDTO;
+import com.openclaw.dto.ArticleUpdateDTO;
 import com.openclaw.service.ArticleService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;

@@ -49,6 +49,11 @@ public interface ArticleService {
     Page<ArticleResponseDTO> getArticlesByPage(Integer pageNum, Integer pageSize);
 
     /**
+     * 分页搜索文章
+     */
+    Page<ArticleResponseDTO> getArticlesWithPagination(int page, int size, String keyword, Long categoryId);
+
+    /**
      * 更新文章
      * 
      * @param id 文章 ID

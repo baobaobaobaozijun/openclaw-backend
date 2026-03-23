@@ -9,6 +9,7 @@ import com.openclaw.exception.ResourceNotFoundException;
 import com.openclaw.mapper.ArticleMapper;
 import com.openclaw.service.ArticleService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -118,6 +119,27 @@ public class ArticleServiceImpl implements ArticleService {
         );
         resultPage.setRecords(dtoList);
 
+        return resultPage;
+    }
+
+    @Override
+    public Page<ArticleResponseDTO> getArticlesWithPagination(int pageNum, int size, String keyword, Long categoryId) {
+        log.info("Search articles: page={}, size={}, keyword={}, categoryId={}", pageNum, size, keyword, categoryId);
+        Page<Article> page = new Page<>(pageNum, size);
+        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+        if (keyword != null && !keyword.isEmpty()) {
+            wrapper.like(Article::getTitle, keyword).or().like(Article::getContent, keyword);
+        }
+        if (categoryId != null) {
+            wrapper.eq(Article::getAuthorId, categoryId);
+        }
+        wrapper.orderByDesc(Article::getCreatedAt);
+        articleMapper.selectPage(page, wrapper);
+        List<ArticleResponseDTO> dtoList = page.getRecords().stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+        Page<ArticleResponseDTO> resultPage = new Page<>(page.getCurrent(), page.getSize(), page.getTotal());
+        resultPage.setRecords(dtoList);
         return resultPage;
     }
 
