@@ -49,6 +49,11 @@ public class User implements Serializable {
     private String phone;
 
     /**
+     * 头像 URL
+     */
+    private String avatar;
+
+    /**
      * 角色：USER-普通用户，ADMIN-管理员
      */
     private String role;
