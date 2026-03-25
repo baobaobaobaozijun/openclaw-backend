@@ -6,6 +6,12 @@ import com.openclaw.dto.ArticleResponseDTO;
 import com.openclaw.dto.ArticleUpdateDTO;
 import com.openclaw.service.ArticleService;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/articles")
 @RequiredArgsConstructor
+@Tag(name = "文章管理", description = "文章 CRUD 接口")
 public class ArticleController {
 
     private final ArticleService articleService;
@@ -33,6 +40,7 @@ public class ArticleController {
      * POST /api/articles
      */
     @PostMapping
+    @Operation(summary = "创建文章", description = "创建新文章，需要提供有效的文章创建信息和用户ID")
     public Result<ArticleResponseDTO> createArticle(@Valid @RequestBody ArticleCreateDTO dto,
                                                      @RequestHeader("X-User-Id") Long authorId) {
         log.info("Create article request: {}", dto);
@@ -46,7 +54,8 @@ public class ArticleController {
      * GET /api/articles/{id}
      */
     @GetMapping("/{id}")
-    public Result<ArticleResponseDTO> getArticleById(@PathVariable Long id) {
+    @Operation(summary = "根据ID获取文章", description = "根据文章ID获取文章详细信息")
+    public Result<ArticleResponseDTO> getArticleById(@Parameter(description = "文章ID") @PathVariable Long id) {
         log.info("Get article by id: {}", id);
         ArticleResponseDTO result = articleService.getArticleById(id);
         return Result.success(result);
@@ -58,11 +67,12 @@ public class ArticleController {
      * GET /api/articles?page=1&size=10&keyword=xxx&categoryId=1
      */
     @GetMapping
+    @Operation(summary = "获取文章列表", description = "获取文章列表，支持分页、关键词搜索和分类筛选")
     public Result<Page<ArticleResponseDTO>> getArticles(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) Long categoryId) {
+            @Parameter(description = "页码，默认为1") @RequestParam(defaultValue = "1") int page,
+            @Parameter(description = "每页数量，默认为10") @RequestParam(defaultValue = "10") int size,
+            @Parameter(description = "搜索关键词") @RequestParam(required = false) String keyword,
+            @Parameter(description = "分类ID") @RequestParam(required = false) Long categoryId) {
         log.info("Get articles with pagination: page={}, size={}, keyword={}, categoryId={}", page, size, keyword, categoryId);
         Page<ArticleResponseDTO> result = articleService.getArticlesWithPagination(page, size, keyword, categoryId);
         return Result.success(result);
@@ -74,9 +84,10 @@ public class ArticleController {
      * GET /api/articles/page?pageNum=1&pageSize=10
      */
     @GetMapping("/page")
+    @Operation(summary = "分页获取文章", description = "分页获取文章列表")
     public Result<Page<ArticleResponseDTO>> getArticlesByPage(
-            @RequestParam(defaultValue = "1") Integer pageNum,
-            @RequestParam(defaultValue = "10") Integer pageSize) {
+            @Parameter(description = "页码，默认为1") @RequestParam(defaultValue = "1") Integer pageNum,
+            @Parameter(description = "每页数量，默认为10") @RequestParam(defaultValue = "10") Integer pageSize) {
         log.info("Get articles by page: {}, {}", pageNum, pageSize);
         Page<ArticleResponseDTO> result = articleService.getArticlesByPage(pageNum, pageSize);
         return Result.success(result);
@@ -88,7 +99,8 @@ public class ArticleController {
      * PUT /api/articles/{id}
      */
     @PutMapping("/{id}")
-    public Result<ArticleResponseDTO> updateArticle(@PathVariable Long id,
+    @Operation(summary = "更新文章", description = "根据ID更新文章信息")
+    public Result<ArticleResponseDTO> updateArticle(@Parameter(description = "文章ID") @PathVariable Long id,
                                                      @Valid @RequestBody ArticleUpdateDTO dto) {
         log.info("Update article: {}", id);
         ArticleResponseDTO result = articleService.updateArticle(id, dto);
@@ -101,7 +113,8 @@ public class ArticleController {
      * DELETE /api/articles/{id}
      */
     @DeleteMapping("/{id}")
-    public Result<Void> deleteArticle(@PathVariable Long id) {
+    @Operation(summary = "删除文章", description = "根据ID删除文章")
+    public Result<Void> deleteArticle(@Parameter(description = "文章ID") @PathVariable Long id) {
         log.info("Delete article: {}", id);
         articleService.deleteArticle(id);
         return Result.success("Article deleted successfully", null);
@@ -113,7 +126,8 @@ public class ArticleController {
      * GET /api/articles/author/{authorId}
      */
     @GetMapping("/author/{authorId}")
-    public Result<List<ArticleResponseDTO>> getArticlesByAuthor(@PathVariable Long authorId) {
+    @Operation(summary = "根据作者ID获取文章", description = "根据作者ID获取该作者的所有文章")
+    public Result<List<ArticleResponseDTO>> getArticlesByAuthor(@Parameter(description = "作者ID") @PathVariable Long authorId) {
         log.info("Get articles by author: {}", authorId);
         List<ArticleResponseDTO> result = articleService.getArticlesByAuthor(authorId);
         return Result.success(result);
@@ -125,7 +139,8 @@ public class ArticleController {
      * GET /api/articles/status/{status}
      */
     @GetMapping("/status/{status}")
-    public Result<List<ArticleResponseDTO>> getArticlesByStatus(@PathVariable String status) {
+    @Operation(summary = "根据状态获取文章", description = "根据文章状态获取文章列表")
+    public Result<List<ArticleResponseDTO>> getArticlesByStatus(@Parameter(description = "文章状态") @PathVariable String status) {
         log.info("Get articles by status: {}", status);
         List<ArticleResponseDTO> result = articleService.getArticlesByStatus(status);
         return Result.success(result);

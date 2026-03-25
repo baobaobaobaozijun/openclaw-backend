@@ -29,3 +29,9 @@ logging:
   level:
     com.openclaw.blog: debug
     org.springframework.web: debug
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
