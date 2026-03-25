@@ -1,6 +1,7 @@
 package com.openclaw.dto;
 
 import lombok.Data;
+import lombok.Builder;
 import java.time.LocalDateTime;
 
 /**
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
  * @since 2026-03-12
  */
 @Data
+@Builder
 public class ArticleResponseDTO {
 
     /**
@@ -26,6 +28,11 @@ public class ArticleResponseDTO {
      * 文章内容
      */
     private String content;
+
+    /**
+     * 渲染后的HTML内容
+     */
+    private String contentHtml;
 
     /**
      * 文章摘要

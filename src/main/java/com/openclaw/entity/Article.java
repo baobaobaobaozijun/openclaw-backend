@@ -39,6 +39,12 @@ public class Article implements Serializable {
     private String content;
 
     /**
+     * 渲染后的HTML内容
+     */
+    @TableField("content_html")
+    private String contentHtml;
+
+    /**
      * 文章摘要
      */
     private String summary;

@@ -1,5 +1,7 @@
 package com.openclaw.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openclaw.dto.ArticleCreateDTO;
 import com.openclaw.dto.ArticleResponseDTO;
 import com.openclaw.dto.ArticleUpdateDTO;
@@ -8,16 +10,18 @@ import com.openclaw.exception.BusinessException;
 import com.openclaw.exception.ResourceNotFoundException;
 import com.openclaw.mapper.ArticleMapper;
 import com.openclaw.service.ArticleService;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.commonmark.ext.gfm.tables.TablesExtension;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +37,15 @@ import java.util.stream.Collectors;
 public class ArticleServiceImpl implements ArticleService {
 
     private final ArticleMapper articleMapper;
+
+    // 移除构造函数，直接在字段声明时初始化Parser和HtmlRenderer，并正确配置扩展
+    private final Parser markdownParser = Parser.builder()
+        .extensions(Arrays.asList(TablesExtension.create()))
+        .build();
+    
+    private final HtmlRenderer htmlRenderer = HtmlRenderer.builder()
+        .extensions(Arrays.asList(TablesExtension.create()))
+        .build();
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -236,8 +249,20 @@ public class ArticleServiceImpl implements ArticleService {
      * 转换 Entity 到 Response DTO
      */
     private ArticleResponseDTO convertToResponseDTO(Article article) {
-        ArticleResponseDTO dto = new ArticleResponseDTO();
-        BeanUtils.copyProperties(article, dto);
-        return dto;
+        Node document = markdownParser.parse(article.getContent());
+        String contentHtml = htmlRenderer.render(document);
+        
+        return ArticleResponseDTO.builder()
+            .id(article.getId())
+            .title(article.getTitle())
+            .content(article.getContent())
+            .contentHtml(contentHtml)
+            .summary(article.getSummary())
+            .status(article.getStatus())
+            .accessLevel(article.getAccessLevel())
+            .viewCount(article.getViewCount())
+            .createdAt(article.getCreatedAt())
+            .updatedAt(article.getUpdatedAt())
+            .build();
     }
 }

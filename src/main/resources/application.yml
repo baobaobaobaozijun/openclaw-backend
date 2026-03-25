@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/blog_system
+    url: jdbc:mysql://localhost:3306/openclaw
     username: root
-    password: password
+    password: 
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   redis:
