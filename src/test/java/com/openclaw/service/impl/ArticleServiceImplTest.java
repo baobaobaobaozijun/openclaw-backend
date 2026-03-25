@@ -58,9 +58,17 @@ class ArticleServiceImplTest {
 
     @Test
     void deleteArticle_shouldCallMapper() {
+        Article article = new Article();
+        article.setId(1L);
+        article.setTitle("Test");
+        article.setContent("Content");
+        article.setAuthorId(1L);
+
+        when(articleMapper.selectById(1L)).thenReturn(article);
         when(articleMapper.deleteById(1L)).thenReturn(1);
 
         assertDoesNotThrow(() -> articleService.deleteArticle(1L));
+        verify(articleMapper, times(1)).selectById(1L);
         verify(articleMapper, times(1)).deleteById(1L);
     }
 }
