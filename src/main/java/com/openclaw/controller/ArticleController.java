@@ -15,9 +15,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import com.openclaw.util.JwtUtil;
 
 /**
  * 文章 Controller
@@ -34,6 +36,9 @@ public class ArticleController {
 
     private final ArticleService articleService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     /**
      * 创建文章
      * 
@@ -42,8 +47,23 @@ public class ArticleController {
     @PostMapping
     @Operation(summary = "创建文章", description = "创建新文章，需要提供有效的文章创建信息和用户ID")
     public Result<ArticleResponseDTO> createArticle(@Valid @RequestBody ArticleCreateDTO dto,
-                                                     @RequestHeader("X-User-Id") Long authorId) {
-        log.info("Create article request: {}", dto);
+                                                     @RequestHeader("Authorization") String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return Result.error(401, "未登录");
+        }
+
+        String token = authorizationHeader.substring(7);
+        Long authorId;
+        try {
+            authorId = jwtUtil.getUserIdFromToken(token);
+            if (authorId == null) {
+                return Result.error(401, "未登录");
+            }
+        } catch (Exception e) {
+            return Result.error(401, "未登录");
+        }
+
+        log.info("Create article request: {} by user: {}", dto, authorId);
         ArticleResponseDTO result = articleService.createArticle(dto, authorId);
         return Result.success("Article created successfully", result);
     }

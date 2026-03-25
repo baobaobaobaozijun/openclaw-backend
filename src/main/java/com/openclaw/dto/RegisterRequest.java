@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class RegisterRequest {
     @NotBlank(message = "用户名不能为空")
-    @Size(min = 3, max = 20, message = "用户名长度3-20")
+    @Size(min = 3, max = 20, message = "用户名长度 3-20")
     private String username;
 
     @NotBlank(message = "邮箱不能为空")
@@ -16,6 +16,9 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "密码不能为空")
-    @Size(min = 6, max = 32, message = "密码长度6-32")
+    @Size(min = 6, max = 32, message = "密码长度 6-32")
     private String password;
+
+    @Size(max = 50, message = "昵称长度不超过 50")
+    private String nickname;
 }
