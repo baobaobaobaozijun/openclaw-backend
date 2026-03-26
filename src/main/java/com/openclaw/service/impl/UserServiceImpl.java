@@ -41,11 +41,16 @@ public class UserServiceImpl implements UserService {
         userMapper.insert(user);
 
         String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), user.getUsername());
+        long expiresAt = System.currentTimeMillis() + jwtUtil.getTokenExpiration();
+        
         return UserDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .token(token)
+                .refreshToken(refreshToken)
+                .expiresAt(expiresAt)
                 .build();
     }
 
@@ -58,12 +63,17 @@ public class UserServiceImpl implements UserService {
         }
 
         String token = jwtUtil.generateToken(user.getId(), user.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getId(), user.getUsername());
+        long expiresAt = System.currentTimeMillis() + jwtUtil.getTokenExpiration();
+        
         return UserDTO.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .avatar(user.getAvatar())
                 .token(token)
+                .refreshToken(refreshToken)
+                .expiresAt(expiresAt)
                 .build();
     }
 

@@ -15,4 +15,6 @@ public class UserDTO {
     private String email;
     private String avatar;
     private String token;
+    private String refreshToken;
+    private Long expiresAt;
 }
