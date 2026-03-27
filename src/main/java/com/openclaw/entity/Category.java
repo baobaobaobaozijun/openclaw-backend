@@ -1,29 +1,22 @@
 package com.openclaw.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 /**
  * 分类实体类
- * 
- * @author 酱肉 (Jiangrou)
- * @since 2026-03-12
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
 @TableName("categories")
 public class Category implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     /**
-     * 分类 ID
+     * 主键ID
      */
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
@@ -34,30 +27,27 @@ public class Category implements Serializable {
     private String name;
 
     /**
-     * 分类 slug（URL 友好）
-     */
-    private String slug;
-
-    /**
      * 分类描述
      */
     private String description;
 
     /**
-     * 父分类 ID
+     * 父级分类ID
      */
-    @TableField("parent_id")
     private Long parentId;
+
+    /**
+     * 排序
+     */
+    private Integer sortOrder;
 
     /**
      * 创建时间
      */
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
 
     /**
-     * 逻辑删除标志
+     * 更新时间
      */
-    @TableLogic
-    private Integer deleted;
+    private LocalDateTime updatedAt;
 }

@@ -54,15 +54,36 @@ public class User implements Serializable {
     private String avatar;
 
     /**
+     * 个人简介
+     */
+    private String bio;
+
+    /**
+     * 昵称
+     */
+    private String nickname;
+
+    /**
      * 角色：USER-普通用户，ADMIN-管理员
      */
     private String role;
+
+    /**
+     * 用户状态：ACTIVE-激活，INACTIVE-未激活，SUSPENDED-暂停
+     */
+    private String status;
 
     /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
+
+    /**
+     * 更新时间
+     */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updatedAt;
 
     /**
      * 逻辑删除标志

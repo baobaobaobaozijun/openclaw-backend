@@ -1,65 +1,73 @@
 package com.openclaw.controller;
 
-import com.openclaw.common.Result;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openclaw.entity.Category;
 import com.openclaw.service.CategoryService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
+/**
+ * 分类 Controller
+ */
 @RestController
-@RequestMapping("/categories")
-@RequiredArgsConstructor
-@Tag(name = "分类管理", description = "文章分类 CRUD 接口")
+@RequestMapping("/api/categories")
 public class CategoryController {
 
-    private final CategoryService categoryService;
+    @Autowired
+    private CategoryService categoryService;
 
-    @GetMapping
-    @Operation(summary = "获取所有分类", description = "获取文章分类列表")
-    public Result<List<Category>> getAllCategories() {
-        log.info("Get all categories");
-        List<Category> categories = categoryService.list();
-        return Result.success(categories);
+    /**
+     * 获取分类列表（支持分页）
+     */
+    @GetMapping("/page")
+    public Page<Category> getCategoriesByPage(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        return categoryService.page(new Page<>(pageNum, pageSize));
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "根据ID获取分类", description = "根据分类ID获取分类详情")
-    public Result<Category> getCategoryById(@Parameter(description = "分类ID") @PathVariable Long id) {
-        log.info("Get category by id: {}", id);
-        Category category = categoryService.getById(id);
-        return Result.success(category);
+    /**
+     * 获取分类树
+     */
+    @GetMapping("/tree")
+    public List<Category> getCategoryTree() {
+        return categoryService.listTree();
     }
 
-    @PostMapping
-    @Operation(summary = "创建分类", description = "创建新的文章分类")
-    public Result<Category> createCategory(@RequestBody Category category) {
-        log.info("Create category: {}", category.getName());
+    /**
+     * 根据父 ID 获取子分类
+     */
+    @GetMapping("/byParent")
+    public List<Category> getCategoriesByParentId(@RequestParam Long parentId) {
+        return categoryService.listByParentId(parentId);
+    }
+
+    /**
+     * 创建分类
+     */
+    @PostMapping("/")
+    public Category createCategory(@RequestBody Category category) {
         categoryService.save(category);
-        return Result.success("分类创建成功", category);
+        return category;
     }
 
+    /**
+     * 更新分类
+     */
     @PutMapping("/{id}")
-    @Operation(summary = "更新分类", description = "根据ID更新分类信息")
-    public Result<Category> updateCategory(@Parameter(description = "分类ID") @PathVariable Long id,
-                                           @RequestBody Category category) {
-        log.info("Update category: {}", id);
+    public Category updateCategory(@PathVariable Long id, @RequestBody Category category) {
         category.setId(id);
         categoryService.updateById(category);
-        return Result.success("分类更新成功", category);
+        return category;
     }
 
+    /**
+     * 删除分类
+     */
     @DeleteMapping("/{id}")
-    @Operation(summary = "删除分类", description = "根据ID删除分类")
-    public Result<Void> deleteCategory(@Parameter(description = "分类ID") @PathVariable Long id) {
-        log.info("Delete category: {}", id);
+    public void deleteCategory(@PathVariable Long id) {
         categoryService.removeById(id);
-        return Result.success("分类删除成功", null);
     }
 }

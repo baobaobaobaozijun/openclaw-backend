@@ -1,54 +1,73 @@
 package com.openclaw.controller;
 
-import com.openclaw.common.Result;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.openclaw.entity.Tag;
 import com.openclaw.service.TagService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
+/**
+ * 标签 Controller
+ */
 @RestController
-@RequestMapping("/tags")
-@RequiredArgsConstructor
-@io.swagger.v3.oas.annotations.tags.Tag(name = "标签管理", description = "文章标签 CRUD 接口")
+@RequestMapping("/api/tags")
 public class TagController {
 
-    private final TagService tagService;
+    @Autowired
+    private TagService tagService;
 
-    @GetMapping
-    @Operation(summary = "获取所有标签", description = "获取文章标签列表")
-    public Result<List<Tag>> getAllTags() {
-        log.info("Get all tags");
-        List<Tag> tags = tagService.list();
-        return Result.success(tags);
+    /**
+     * 获取标签列表（支持分页）
+     */
+    @GetMapping("/page")
+    public Page<Tag> getTagsByPage(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize) {
+        return tagService.page(new Page<>(pageNum, pageSize));
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "根据ID获取标签", description = "根据标签ID获取标签详情")
-    public Result<Tag> getTagById(@Parameter(description = "标签ID") @PathVariable Long id) {
-        log.info("Get tag by id: {}", id);
-        Tag tag = tagService.getById(id);
-        return Result.success(tag);
+    /**
+     * 根据文章 ID 获取标签
+     */
+    @GetMapping("/byArticle")
+    public List<Tag> getTagsByArticleId(@RequestParam Long articleId) {
+        return tagService.listByArticleId(articleId);
     }
 
-    @PostMapping
-    @Operation(summary = "创建标签", description = "创建新的文章标签")
-    public Result<Tag> createTag(@RequestBody Tag tag) {
-        log.info("Create tag: {}", tag.getName());
+    /**
+     * 获取所有标签
+     */
+    @GetMapping("/")
+    public List<Tag> getAllTags() {
+        return tagService.list();
+    }
+
+    /**
+     * 创建标签
+     */
+    @PostMapping("/")
+    public Tag createTag(@RequestBody Tag tag) {
         tagService.save(tag);
-        return Result.success("标签创建成功", tag);
+        return tag;
     }
 
+    /**
+     * 更新标签
+     */
+    @PutMapping("/{id}")
+    public Tag updateTag(@PathVariable Long id, @RequestBody Tag tag) {
+        tag.setId(id);
+        tagService.updateById(tag);
+        return tag;
+    }
+
+    /**
+     * 删除标签
+     */
     @DeleteMapping("/{id}")
-    @Operation(summary = "删除标签", description = "根据ID删除标签")
-    public Result<Void> deleteTag(@Parameter(description = "标签ID") @PathVariable Long id) {
-        log.info("Delete tag: {}", id);
+    public void deleteTag(@PathVariable Long id) {
         tagService.removeById(id);
-        return Result.success("标签删除成功", null);
     }
 }
