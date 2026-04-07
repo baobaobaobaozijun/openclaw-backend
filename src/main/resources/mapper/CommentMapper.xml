@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.openclaw.mapper.CommentMapper">
+
+    <resultMap id="BaseResultMap" type="com.openclaw.entity.Comment">
+        <id column="id" property="id"/>
+        <result column="article_id" property="articleId"/>
+        <result column="user_id" property="userId"/>
+        <result column="content" property="content"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <select id="selectByArticleId" resultMap="BaseResultMap">
+        SELECT * FROM comments 
+        WHERE article_id = #{articleId} AND deleted = 0 
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT * FROM comments 
+        WHERE user_id = #{userId} AND deleted = 0 
+        ORDER BY created_at DESC
+    </select>
+
+</mapper>
