@@ -76,4 +76,31 @@ public class JwtUtil {
             return false;
         }
     }
+
+    public String refreshToken(String oldToken) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(oldToken)
+                    .getBody();
+
+            Long userId = Long.parseLong(claims.getSubject());
+            String username = claims.get("username", String.class);
+            
+            // Generate a new token with the standard expiration
+            Date now = new Date();
+            Date expiryDate = new Date(now.getTime() + expiration);
+
+            return Jwts.builder()
+                    .setSubject(String.valueOf(userId))
+                    .claim("username", username)
+                    .setIssuedAt(now)
+                    .setExpiration(expiryDate)
+                    .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                    .compact();
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new RuntimeException("Could not refresh token", e);
+        }
+    }
 }

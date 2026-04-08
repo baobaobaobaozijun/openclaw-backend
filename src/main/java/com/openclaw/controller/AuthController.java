@@ -4,12 +4,17 @@ import com.openclaw.common.Result;
 import com.openclaw.dto.LoginRequest;
 import com.openclaw.dto.RegisterRequest;
 import com.openclaw.dto.UserDTO;
+import com.openclaw.service.AuthService;
 import com.openclaw.service.UserService;
 import com.openclaw.util.JwtUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,6 +24,9 @@ public class AuthController {
 
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    
+    @Autowired
+    private AuthService authService;
 
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "通过用户名和密码登录，返回 JWT Token")
@@ -38,19 +46,19 @@ public class AuthController {
     @Operation(summary = "获取当前用户信息", description = "根据 JWT Token 获取当前登录用户信息")
     public Result<UserDTO> getCurrentUser(@RequestHeader("Authorization") String authorizationHeader) {
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            return Result.error(401, "未登录");
+            return Result.error("未登录");
         }
 
         String token = authorizationHeader.substring(7);
         try {
             Long userId = jwtUtil.getUserIdFromToken(token);
             if (userId == null) {
-                return Result.error(401, "未登录");
+                return Result.error("未登录");
             }
             
             UserDTO user = userService.getUserById(userId);
             if (user == null) {
-                return Result.error(401, "未登录");
+                return Result.error("未登录");
             }
             
             // 创建一个新的UserDTO，将token字段设为null
@@ -63,7 +71,21 @@ public class AuthController {
             
             return Result.success(userWithoutToken);
         } catch (Exception e) {
-            return Result.error(401, "未登录");
+            return Result.error("未登录");
         }
+    }
+
+    /**
+     * 刷新 Token
+     */
+    @PostMapping("/refresh")
+    public Map<String, Object> refreshToken(@RequestHeader("Authorization") String authorization) {
+        String token = authorization.replace("Bearer ", "");
+        String newToken = jwtUtil.refreshToken(token);
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("token", newToken);
+        result.put("expiresIn", 86400000);
+        return result;
     }
 }

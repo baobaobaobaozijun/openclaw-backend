@@ -12,7 +12,7 @@ import java.util.List;
  * 分类 Controller
  */
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
 public class CategoryController {
 
     @Autowired

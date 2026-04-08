@@ -16,6 +16,7 @@ public class UserDTO {
     private String phone;
     private String avatar;
     private String role;
+    private Integer accessLevel;
     private String token;
     private String refreshToken;
     private Long expiresAt;

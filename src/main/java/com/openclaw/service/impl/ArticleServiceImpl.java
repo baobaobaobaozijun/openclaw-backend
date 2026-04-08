@@ -67,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
         
         // 设置默认值
         if (article.getStatus() == null) {
-            article.setStatus("DRAFT");
+            article.setStatus("DRAFT"); // 默认草稿
         }
         if (article.getAccessLevel() == null) {
             article.setAccessLevel(0);

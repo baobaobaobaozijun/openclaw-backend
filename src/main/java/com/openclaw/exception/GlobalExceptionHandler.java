@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public Result<?> handleBusinessException(BusinessException e) {
         log.error("Business exception: {}", e.getMessage(), e);
-        return Result.error(e.getCode(), e.getMessage());
+        return Result.error(e.getMessage());
     }
 
     /**
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public Result<?> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.error("Resource not found: {}", e.getMessage(), e);
-        return Result.error(404, e.getMessage());
+        return Result.error(e.getMessage());
     }
 
     /**

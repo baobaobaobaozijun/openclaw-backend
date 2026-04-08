@@ -10,7 +10,7 @@ import java.util.List;
  * 提供 Agent 工作状态的查询接口
  */
 @RestController
-@RequestMapping("/api/agents")
+@RequestMapping("/agents")
 public class AgentStatusController {
 
     /**

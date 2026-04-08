@@ -30,10 +30,9 @@ public class ArticlePublishScheduler {
         log.info("开始执行自动发布草稿文章任务");
         
         try {
-            // 查询所有状态为 DRAFT 的文章
+            // 查询所有状态为草稿的文章（status: 0=草稿，1=已发布）
             LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Article::getStatus, "DRAFT");
-            wrapper.le(Article::getPublishedAt, LocalDateTime.now());
+            wrapper.eq(Article::getStatus, 0);
             
             List<Article> draftArticles = articleMapper.selectList(wrapper);
             

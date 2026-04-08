@@ -69,6 +69,11 @@ public class User implements Serializable {
     private String role;
 
     /**
+     * 访问级别
+     */
+    private Integer accessLevel;
+
+    /**
      * 用户状态：ACTIVE-激活，INACTIVE-未激活，SUSPENDED-暂停
      */
     private String status;

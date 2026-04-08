@@ -12,7 +12,7 @@ import java.util.List;
  * 标签 Controller
  */
 @RestController
-@RequestMapping("/api/tags")
+@RequestMapping("/tags")
 public class TagController {
 
     @Autowired

@@ -4,6 +4,9 @@ server:
     context-path: /api
 
 spring:
+  mvc:
+    static-path-pattern: /static/**
+  
   datasource:
     url: jdbc:mysql://localhost:3306/openclaw
     username: root
@@ -32,6 +35,7 @@ logging:
 
 springdoc:
   api-docs:
-    path: /api-docs
+    path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui.html
+    use-root-path: true
